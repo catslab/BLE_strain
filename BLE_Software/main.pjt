@@ -1,0 +1,28 @@
+[PROJECT]
+Target=C:\Users\cedric\Desktop\BLE_gauge\main.hex
+Development_Mode=
+Processor_Text=PIC16F1825
+ToolSuite=CCS
+Processor=0x1825
+[C:\Users\cedric\Desktop\BLE_gauge\main]
+Type=4
+Path=
+FileList=
+BuildTool=
+OptionString=
+AdditionalOptionString=
+[mru-list]
+1=C:\Users\cedric\Desktop\BLE_gauge\main.c
+[Windows]
+0=0000 %S 0 0 796 451 3 0
+[Units]
+Link=0
+Count=1
+1=main
+2=platform.h
+[Opened Files]
+1=main.c
+2=platform.h
+3=main.h
+4=..\..\..\..\Program Files (x86)\PICC\Drivers\lcd.c
+5=

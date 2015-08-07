@@ -1,0 +1,691 @@
+CCS PCM C Compiler, Version 4.130, 5967               07-août-15 12:16
+
+               Filename: C:\Users\cedric\Desktop\BLE_gauge\main.lst
+
+               ROM used: 641 words (8%)
+                         Largest free fragment is 2048
+               RAM used: 15 (1%) at main() level
+                         33 (3%) worst case
+               Stack:    2 worst case (1 in main + 1 for interrupts)
+
+*
+0000:  MOVLP  00
+0001:  GOTO   195
+0002:  NOP
+*
+0004:  CLRF   03
+0005:  CLRF   0A
+0006:  MOVLB  00
+0007:  MOVF   77,W
+0008:  MOVWF  20
+0009:  MOVF   78,W
+000A:  MOVWF  21
+000B:  MOVF   79,W
+000C:  MOVWF  22
+000D:  MOVF   7A,W
+000E:  MOVWF  23
+000F:  BTFSS  0B.5
+0010:  GOTO   013
+0011:  BTFSC  0B.2
+0012:  GOTO   01C
+0013:  MOVF   20,W
+0014:  MOVWF  77
+0015:  MOVF   21,W
+0016:  MOVWF  78
+0017:  MOVF   22,W
+0018:  MOVWF  79
+0019:  MOVF   23,W
+001A:  MOVWF  7A
+001B:  RETFIE
+001C:  MOVLP  00
+001D:  GOTO   01E
+.................... #ZERO_RAM 
+.................... #include <main.h> 
+.................... #include <16F1825.h> 
+.................... //////// Standard Header file for the PIC16F1825 device //////////////// 
+.................... #device PIC16F1825 
+.................... #list 
+....................  
+.................... #define CRYSTAL_FREQ 32000000 
+.................... #device adc=16 
+.................... //#device *=16 
+.................... #FUSES NOWDT                    //No Watch Dog Timer 
+.................... #FUSES INTRC_IO                 //Internal RC Osc, no CLKOUT 
+.................... #FUSES WDT_SW                   //No Watch Dog Timer, enabled in Software 
+.................... #FUSES NOBROWNOUT               //No brownout reset 
+.................... #FUSES NOIESO                   //Internal External SWITCH Over mode disabled 
+.................... #FUSES NOSTVREN                 //Stack full/underflow will not cause reset 
+.................... #FUSES NOLVP                    //No low voltage prgming, B3(PIC16) or B5(PIC18) used FOR I/O 
+.................... #FUSES NOPROTECT    //Code not protected from reading 
+....................  
+.................... #use delay (clock=CRYSTAL_FREQ) 
+*
+0067:  MOVLW  20
+0068:  MOVWF  05
+0069:  MOVLW  0A
+006A:  MOVWF  04
+006B:  MOVF   00,W
+006C:  BTFSC  03.2
+006D:  GOTO   07B
+006E:  MOVLW  0A
+006F:  MOVWF  78
+0070:  CLRF   77
+0071:  DECFSZ 77,F
+0072:  GOTO   071
+0073:  DECFSZ 78,F
+0074:  GOTO   070
+0075:  MOVLW  5F
+0076:  MOVWF  77
+0077:  DECFSZ 77,F
+0078:  GOTO   077
+0079:  DECFSZ 00,F
+007A:  GOTO   06E
+007B:  MOVLP  00
+007C:  GOTO   251 (RETURN)
+....................  
+.................... #include "platform.h" 
+.................... #define BT_BAUDRATE 9600 
+....................  
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... //      I/O configuration 
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... #define   PA_DefData      0b00100000 
+.................... #define   PA_DefTRIS      0b00000000 
+....................  
+....................    //  5   LED 
+....................    //  4   NC 
+....................    //  3   MCLR 
+....................    //  2   NC 
+....................    //  1   PGEC 
+....................    //  0   PGED 
+....................  
+.................... #define   PC_DefData      0b00000000 
+.................... #define   PC_DefTRIS      0b00100010 
+....................  
+....................    // 5     RX 
+....................    // 4     TX 
+....................    // 3     NC 
+....................    // 2     CS 
+....................    // 1     IN 
+....................    // 0     CLK 
+....................     
+....................  
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... //      GPS module connection 
+.................... /////////////////////////////////////////////////////////////////////////// 
+....................    
+.................... #USE RS232(BAUD=BT_BAUDRATE, UART1, ERRORS) 
+....................  
+....................  
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... //      Define the register map for this processor 
+.................... /////////////////////////////////////////////////////////////////////////// 
+....................  
+.................... #BYTE SSP1STAT = 0x214 
+.................... #BYTE SSP1CON1 = 0x215 
+.................... #BYTE SSP1CON2 = 0x216 
+.................... #BYTE SSP1BUF  = 0x211 
+....................  
+.................... #BYTE APFCON0 = 0x11D 
+....................  
+.................... #BYTE PORTA = 0x00C 
+.................... #BYTE TRISA = 0x08C 
+.................... #BYTE LATA  = 0x10C 
+....................  
+.................... #BYTE PORTC = 0x00E 
+.................... #BYTE TRISC = 0x08E 
+.................... #BYTE LATC  = 0x10E 
+....................  
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... //      Map the SPI port 
+.................... /////////////////////////////////////////////////////////////////////////// 
+....................  
+.................... #define GPS_SPISTAT      SSP1STAT 
+.................... #define GPS_SPICON1      SSP1CON1 
+.................... #define GPS_SPIBUF       SSP1BUF 
+....................  
+.................... ////////////////////////////////////////////////////////////////////////// 
+.................... //      Define Register Bits 
+.................... ////////////////////////////////////////////////////////////////////////// 
+....................  
+.................... #BIT SPI_WCOL=GPS_SPICON1.7 
+.................... #BIT SPI_SSPOV=GPS_SPICON1.6 
+.................... #BIT SPI_SSPEN=GPS_SPICON1.5 
+.................... #BIT SPI_CKP=GPS_SPICON1.4 
+.................... #BIT SPI_SSPM3=GPS_SPICON1.3 
+.................... #BIT SPI_SSPM2=GPS_SPICON1.2 
+.................... #BIT SPI_SSPM1=GPS_SPICON1.1 
+.................... #BIT SPI_SSPM0=GPS_SPICON1.0 
+....................  
+.................... #BIT SPI_SMP=GPS_SPISTAT.7 
+.................... #BIT SPI_CKE=GPS_SPISTAT.6 
+.................... #BIT SPI_BF=GPS_SPISTAT.0 
+....................  
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... //      SPI connection to Main 
+.................... /////////////////////////////////////////////////////////////////////////// 
+....................  
+....................  
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... //      Status LED 
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... #define  LED_Status_PIN LATA.5 
+.................... #bit     LED = LED_Status_PIN 
+....................  
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... //      Bluetooth Enable  
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... #define  BT_WKUP_PIN LATC.3 
+.................... #bit     BT_EN = BT_WKUP_PIN 
+....................  
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... //      ADC Pins 
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... #define ADC_CLK_PIN  LATC.0 
+.................... #define ADC_IN_PIN   PORTC.1 
+.................... #define ADC_CS_PIN   LATC.2 
+....................  
+.................... #bit  ADC_CLK = ADC_CLK_PIN 
+.................... #bit  ADC_IN = ADC_IN_PIN 
+.................... #bit  ADC_CS = ADC_CS_PIN 
+....................  
+....................  
+.................... #define DELAY 1000 
+....................  
+.................... #USE FAST_IO (A) 
+.................... #USE FAST_IO (C) 
+....................  
+.................... int1 flag_ADC = 0; 
+.................... unsigned int16 ADC_result=0; 
+.................... int16 timer_ADC = 0; 
+.................... #define temps_ADC 250 // in ms 
+....................  
+.................... #int_TIMER0 
+.................... void  TIMER0_isr(void)  
+.................... { 
+....................    if (timer_ADC++ == temps_ADC ) 
+*
+001E:  MOVF   29,W
+001F:  MOVWF  7A
+0020:  MOVF   28,W
+0021:  INCF   28,F
+0022:  BTFSC  03.2
+0023:  INCF   29,F
+0024:  MOVWF  2F
+0025:  MOVF   7A,W
+0026:  MOVWF  30
+0027:  MOVF   2F,W
+0028:  SUBLW  FA
+0029:  BTFSS  03.2
+002A:  GOTO   031
+002B:  MOVF   30,F
+002C:  BTFSS  03.2
+002D:  GOTO   031
+....................    { 
+....................       timer_ADC = 0; 
+002E:  CLRF   29
+002F:  CLRF   28
+....................       flag_ADC = 1; 
+0030:  BSF    25.0
+....................    } 
+....................        
+....................    clear_interrupt(INT_TIMER0); 
+0031:  MOVF   07,W
+0032:  BCF    0B.2
+.................... } 
+....................  
+0033:  BCF    0B.2
+0034:  MOVLP  00
+0035:  GOTO   013
+.................... void init_pic(void) 
+.................... { 
+....................    // initialise port A 
+....................    LATA = PA_DefData; 
+*
+0043:  MOVLW  20
+0044:  MOVLB  02
+0045:  MOVWF  0C
+....................    TRISA = PA_DefTRIS; 
+0046:  MOVLB  01
+0047:  CLRF   0C
+....................    // initialise port C 
+....................    LATC = PC_DefData; 
+0048:  MOVLB  02
+0049:  CLRF   0E
+....................    TRISC = PC_DefTRIS; 
+004A:  MOVLW  22
+004B:  MOVLB  01
+004C:  MOVWF  0E
+....................    APFCON0 = 0x0; 
+004D:  MOVLB  02
+004E:  CLRF   1D
+....................     
+....................    //setup_timer_2 (T2_DIV_BY_16, 250, 10); //500 us overflow, 5.0 ms interrupt 
+....................    setup_comparator (NC_NC_NC_NC); // This device COMP currently not supported by the PICWizard 
+004F:  CLRF   12
+0050:  CLRF   11
+0051:  CLRF   14
+0052:  CLRF   13
+....................    setup_oscillator (OSC_8MHZ|OSC_PLL_ON) ; 
+0053:  MOVLW  F0
+0054:  MOVLB  01
+0055:  MOVWF  19
+....................    setup_timer_0(RTCC_INTERNAL|RTCC_DIV_32|RTCC_8_bit);      //1.0 ms overflow 
+0056:  MOVF   15,W
+0057:  ANDLW  C0
+0058:  IORLW  04
+0059:  MOVWF  15
+....................  
+....................    setup_timer_4(T4_DISABLED,0,1); 
+005A:  MOVLW  00
+005B:  MOVWF  78
+005C:  MOVLB  08
+005D:  MOVWF  17
+005E:  MOVLW  00
+005F:  MOVWF  16
+....................    setup_timer_6(T6_DISABLED,0,1); 
+0060:  MOVWF  78
+0061:  MOVWF  1E
+0062:  MOVLW  00
+0063:  MOVWF  1D
+.................... } 
+0064:  MOVLP  00
+0065:  MOVLB  00
+0066:  GOTO   24A (RETURN)
+....................  
+.................... void ADS() 
+.................... { 
+....................    LED=1; 
+*
+00C8:  MOVLB  02
+00C9:  BSF    0C.5
+....................    ADC_result = 0; 
+00CA:  MOVLB  00
+00CB:  CLRF   27
+00CC:  CLRF   26
+....................    unsigned int8 i; 
+....................    // Start a conversion with a lo pulse on ADC_CONVERT 
+....................    //ADC_CS = 0; // LOWER NOT-CS 
+....................    ADC_CLK = 0; //  clock low 
+00CD:  MOVLB  02
+00CE:  BCF    0E.0
+....................    delay_cycles(4); 
+00CF:  GOTO   0D0
+00D0:  GOTO   0D1
+....................    ADC_CS = 0; // START CONVERT not CS line 
+00D1:  BCF    0E.2
+....................    delay_cycles(4); 
+00D2:  GOTO   0D3
+00D3:  GOTO   0D4
+....................  
+....................    for ( i = 0 ; i < 8 ; i++ ) 
+00D4:  MOVLB  00
+00D5:  CLRF   2A
+00D6:  MOVF   2A,W
+00D7:  SUBLW  07
+00D8:  BTFSS  03.0
+00D9:  GOTO   0EA
+....................    { 
+....................       ADC_CLK = 1;       
+00DA:  MOVLB  02
+00DB:  BSF    0E.0
+....................       delay_cycles(4); 
+00DC:  GOTO   0DD
+00DD:  GOTO   0DE
+....................       IF ( !ADC_IN )  
+00DE:  MOVLB  00
+00DF:  BTFSC  0E.1
+00E0:  GOTO   0E3
+....................          BREAK; 
+00E1:  GOTO   0EA
+....................       ELSE  
+00E2:  GOTO   0E6
+....................          ADC_CLK = 0; 
+00E3:  MOVLB  02
+00E4:  BCF    0E.0
+00E5:  MOVLB  00
+....................       delay_cycles(4); 
+00E6:  GOTO   0E7
+00E7:  GOTO   0E8
+....................    } 
+00E8:  INCF   2A,F
+00E9:  GOTO   0D6
+....................  
+.................... //   IF (8==i) BADDIE(51); // GLOBAL TIMED OUT WARN 
+....................    ADC_CLK = 0;   // produce a new lo-to-high clock 
+00EA:  MOVLB  02
+00EB:  BCF    0E.0
+....................    delay_cycles(4);      // wait for a bit 
+00EC:  GOTO   0ED
+00ED:  GOTO   0EE
+....................  
+....................    // now read data 
+....................    for (i=0;i<16;i++){ 
+00EE:  MOVLB  00
+00EF:  CLRF   2A
+00F0:  MOVF   2A,W
+00F1:  SUBLW  0F
+00F2:  BTFSS  03.0
+00F3:  GOTO   10E
+....................    ADC_CLK = 1;  // now after rising edge 
+00F4:  MOVLB  02
+00F5:  BSF    0E.0
+....................    delay_cycles(8);      // OR input pin with 16bit int 
+00F6:  MOVLW  02
+00F7:  MOVWF  77
+00F8:  DECFSZ 77,F
+00F9:  GOTO   0F8
+00FA:  NOP
+....................    ADC_result |= ADC_IN; //   OR input pin with 16bit int 
+00FB:  MOVLW  00
+00FC:  MOVLB  00
+00FD:  BTFSC  0E.1
+00FE:  MOVLW  01
+00FF:  IORWF  26,F
+....................    ADC_CLK = 0;   // produce a new lo-to-high clock 
+0100:  MOVLB  02
+0101:  BCF    0E.0
+....................    if (i !=15)  
+0102:  MOVLB  00
+0103:  MOVF   2A,W
+0104:  SUBLW  0F
+0105:  BTFSC  03.2
+0106:  GOTO   10A
+....................       ADC_result=ADC_result<<1;         // and shift that bit along toward MSB 
+0107:  BCF    03.0
+0108:  RLF    26,F
+0109:  RLF    27,F
+....................    delay_cycles(4); 
+010A:  GOTO   10B
+010B:  GOTO   10C
+....................   } 
+010C:  INCF   2A,F
+010D:  GOTO   0F0
+....................   // PREP FOR NEXT CYCLE 
+....................   ADC_CLK = 0; 
+010E:  MOVLB  02
+010F:  BCF    0E.0
+....................   delay_cycles(8); 
+0110:  MOVLW  02
+0111:  MOVWF  77
+0112:  DECFSZ 77,F
+0113:  GOTO   112
+0114:  NOP
+....................   ADC_CS = 1; // SHUT OFF CONVERTER  
+0115:  BSF    0E.2
+....................   LED = 0; 
+0116:  BCF    0C.5
+.................... } 
+0117:  MOVLP  00
+0118:  MOVLB  00
+0119:  GOTO   266 (RETURN)
+....................  
+.................... void main() 
+.................... { 
+*
+0195:  MOVLW  57
+0196:  MOVWF  77
+0197:  MOVLW  20
+0198:  MOVWF  04
+0199:  MOVLW  00
+019A:  MOVWF  05
+019B:  CLRF   00
+019C:  INCF   04,F
+019D:  DECFSZ 77,F
+019E:  GOTO   19B
+019F:  CLRF   78
+01A0:  CLRF   79
+01A1:  CLRF   7A
+01A2:  CLRF   7B
+01A3:  CLRF   7C
+01A4:  CLRF   7D
+01A5:  CLRF   7E
+01A6:  MOVLW  50
+01A7:  MOVWF  77
+01A8:  MOVLW  A0
+01A9:  MOVWF  04
+01AA:  MOVLW  00
+01AB:  MOVWF  05
+01AC:  CLRF   00
+01AD:  INCF   04,F
+01AE:  DECFSZ 77,F
+01AF:  GOTO   1AC
+01B0:  MOVLW  50
+01B1:  MOVWF  77
+01B2:  MOVLW  20
+01B3:  MOVWF  04
+01B4:  MOVLW  01
+01B5:  MOVWF  05
+01B6:  CLRF   00
+01B7:  INCF   04,F
+01B8:  DECFSZ 77,F
+01B9:  GOTO   1B6
+01BA:  CLRF   05
+01BB:  MOVLW  50
+01BC:  MOVWF  77
+01BD:  MOVLW  A0
+01BE:  MOVWF  04
+01BF:  MOVLW  01
+01C0:  MOVWF  05
+01C1:  CLRF   00
+01C2:  INCF   04,F
+01C3:  DECFSZ 77,F
+01C4:  GOTO   1C1
+01C5:  CLRF   05
+01C6:  MOVLW  50
+01C7:  MOVWF  77
+01C8:  MOVLW  20
+01C9:  MOVWF  04
+01CA:  MOVLW  02
+01CB:  MOVWF  05
+01CC:  CLRF   00
+01CD:  INCF   04,F
+01CE:  DECFSZ 77,F
+01CF:  GOTO   1CC
+01D0:  CLRF   05
+01D1:  MOVLW  50
+01D2:  MOVWF  77
+01D3:  MOVLW  A0
+01D4:  MOVWF  04
+01D5:  MOVLW  02
+01D6:  MOVWF  05
+01D7:  CLRF   00
+01D8:  INCF   04,F
+01D9:  DECFSZ 77,F
+01DA:  GOTO   1D7
+01DB:  CLRF   05
+01DC:  MOVLW  50
+01DD:  MOVWF  77
+01DE:  MOVLW  20
+01DF:  MOVWF  04
+01E0:  MOVLW  03
+01E1:  MOVWF  05
+01E2:  CLRF   00
+01E3:  INCF   04,F
+01E4:  DECFSZ 77,F
+01E5:  GOTO   1E2
+01E6:  CLRF   05
+01E7:  MOVLW  50
+01E8:  MOVWF  77
+01E9:  MOVLW  A0
+01EA:  MOVWF  04
+01EB:  MOVLW  03
+01EC:  MOVWF  05
+01ED:  CLRF   00
+01EE:  INCF   04,F
+01EF:  DECFSZ 77,F
+01F0:  GOTO   1ED
+01F1:  CLRF   05
+01F2:  MOVLW  50
+01F3:  MOVWF  77
+01F4:  MOVLW  20
+01F5:  MOVWF  04
+01F6:  MOVLW  04
+01F7:  MOVWF  05
+01F8:  CLRF   00
+01F9:  INCF   04,F
+01FA:  DECFSZ 77,F
+01FB:  GOTO   1F8
+01FC:  CLRF   05
+01FD:  MOVLW  50
+01FE:  MOVWF  77
+01FF:  MOVLW  A0
+0200:  MOVWF  04
+0201:  MOVLW  04
+0202:  MOVWF  05
+0203:  CLRF   00
+0204:  INCF   04,F
+0205:  DECFSZ 77,F
+0206:  GOTO   203
+0207:  CLRF   05
+0208:  MOVLW  50
+0209:  MOVWF  77
+020A:  MOVLW  20
+020B:  MOVWF  04
+020C:  MOVLW  05
+020D:  MOVWF  05
+020E:  CLRF   00
+020F:  INCF   04,F
+0210:  DECFSZ 77,F
+0211:  GOTO   20E
+0212:  CLRF   05
+0213:  MOVLW  50
+0214:  MOVWF  77
+0215:  MOVLW  A0
+0216:  MOVWF  04
+0217:  MOVLW  05
+0218:  MOVWF  05
+0219:  CLRF   00
+021A:  INCF   04,F
+021B:  DECFSZ 77,F
+021C:  GOTO   219
+021D:  CLRF   05
+021E:  MOVLW  30
+021F:  MOVWF  77
+0220:  MOVLW  20
+0221:  MOVWF  04
+0222:  MOVLW  06
+0223:  MOVWF  05
+0224:  CLRF   00
+0225:  INCF   04,F
+0226:  DECFSZ 77,F
+0227:  GOTO   224
+0228:  CLRF   05
+0229:  CLRF   20
+022A:  CLRF   05
+022B:  CLRF   04
+022C:  MOVLW  1F
+022D:  ANDWF  03,F
+022E:  MOVLW  F0
+022F:  MOVLB  01
+0230:  MOVWF  19
+0231:  MOVLB  00
+0232:  CLRF   24
+0233:  MOVLW  33
+0234:  MOVLB  03
+0235:  MOVWF  1B
+0236:  MOVLW  A2
+0237:  MOVWF  1E
+0238:  MOVLW  90
+0239:  MOVWF  1D
+023A:  MOVLB  00
+023B:  BCF    25.0
+023C:  CLRF   27
+023D:  CLRF   26
+023E:  CLRF   29
+023F:  CLRF   28
+0240:  MOVLB  03
+0241:  CLRF   0C
+0242:  CLRF   0E
+0243:  MOVLB  02
+0244:  CLRF   12
+0245:  CLRF   11
+0246:  CLRF   14
+0247:  CLRF   13
+....................    init_pic(); 
+0248:  MOVLB  00
+0249:  GOTO   043
+....................    BT_EN = 1; 
+024A:  MOVLB  02
+024B:  BSF    0E.3
+....................    ADC_CS = 1; 
+024C:  BSF    0E.2
+....................    delay_ms(250); 
+024D:  MOVLW  FA
+024E:  MOVLB  00
+024F:  MOVWF  2A
+0250:  GOTO   067
+....................     
+....................    enable_interrupts(INT_TIMER0); 
+0251:  BSF    0B.5
+....................    enable_interrupts(GLOBAL); 
+0252:  MOVLW  C0
+0253:  IORWF  0B,F
+....................    //Puts module into transparent UART mode immediately 
+....................    printf("TRS\r"); 
+0254:  MOVLW  36
+0255:  MOVLB  03
+0256:  MOVWF  11
+0257:  MOVLW  00
+0258:  MOVWF  12
+0259:  MOVLB  00
+025A:  CALL   07D
+....................     
+....................    printf("READY !\r"); 
+025B:  MOVLW  39
+025C:  MOVLB  03
+025D:  MOVWF  11
+025E:  MOVLW  00
+025F:  MOVWF  12
+0260:  MOVLB  00
+0261:  CALL   07D
+....................    //Example blinking LED program 
+....................    while(true) 
+....................    { 
+....................        
+....................       if (flag_ADC) 
+0262:  BTFSS  25.0
+0263:  GOTO   280
+....................       { 
+....................          flag_ADC=0; 
+0264:  BCF    25.0
+....................          ADS(); 
+0265:  GOTO   0C8
+....................          printf("ADC:%LX\r",ADC_result); 
+0266:  MOVLW  3E
+0267:  MOVLB  03
+0268:  MOVWF  11
+0269:  MOVLW  00
+026A:  MOVWF  12
+026B:  BCF    03.0
+026C:  MOVLW  04
+026D:  MOVLB  00
+026E:  MOVWF  2A
+026F:  GOTO   11A
+0270:  MOVF   27,W
+0271:  MOVWF  2A
+0272:  MOVLW  37
+0273:  MOVWF  2B
+0274:  CALL   16E
+0275:  MOVF   26,W
+0276:  MOVWF  2A
+0277:  MOVLW  37
+0278:  MOVWF  2B
+0279:  CALL   16E
+027A:  MOVLW  0D
+027B:  BTFSS  11.4
+027C:  GOTO   27B
+027D:  MOVLB  03
+027E:  MOVWF  1A
+027F:  MOVLB  00
+....................       } 
+....................        
+....................    } 
+0280:  GOTO   262
+....................  
+.................... } 
+0281:  SLEEP
+
+Configuration Fuses:
+   Word  1: 29CC   INTRC_IO WDT_SW PUT MCLR NOPROTECT NOCPD NOBROWNOUT NOCLKOUT NOIESO FCMEN
+   Word  2: 1CFF   NOWRT PLL_SW NOSTVREN BORV24 NODEBUG NOLVP

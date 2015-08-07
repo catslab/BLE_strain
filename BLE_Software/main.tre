@@ -1,0 +1,13 @@
+ÀÄmain
+   ÃÄMAIN  0/237  Ram=0
+   ³  ÃÄ@cinit1  (Inline)  Ram=0
+   ³  ÃÄ??0??
+   ³  ÃÄinit_pic  0/36  Ram=0
+   ³  ÃÄ@delay_ms1  0/22  Ram=1
+   ³  ÃÄ@PSTRINGC7_9600_116_117  0/75  Ram=4
+   ³  ÃÄ@PSTRINGC7_9600_116_117  0/75  Ram=4
+   ³  ÃÄADS  0/82  Ram=0
+   ³  ÃÄ@PSTRINGCN7_9600_116_117  0/84  Ram=5
+   ³  ÃÄ@PRINTF_X_9600_116_117  0/39  Ram=2
+   ³  ÀÄ@PRINTF_X_9600_116_117  0/39  Ram=2
+   ÀÄTIMER0_isr  0/24  Ram=2
