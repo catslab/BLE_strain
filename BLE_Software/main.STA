@@ -1,31 +1,31 @@
 
-ROM used: 641 (8%)
-          641 (8%) including unused fragments
+ROM used: 650 (8%)
+          650 (8%) including unused fragments
 
           1 Average locations per line
-          11 Average locations per statement
+          10 Average locations per statement
 
-RAM used: 15 (1%) at main() level
+RAM used: 16 (2%) at main() level
           33 (3%) worst case
 
 Stack used: 2 worst case (out of 16 total available)
 
 Lines Stmts  %   Files
 ----- ----- ---  -----
-  117    60 100  main.c
+  121    62 100  main.c
    15     0   0  main.h
-  520     0   0  ..\..\..\..\Program Files (x86)\PICC\devices\16F1825.h
+  520     0   0  ..\..\..\..\..\Program Files (x86)\PICC\devices\16F1825.h
   105     0   0  platform.h
 ----- -----
-  757    60 Total
+  761    62 Total
 
 Page ROM  %  RAM   Vol Diff  Functions:
 ---- --- --- ---   --- ----  ----------
-0     22   3   1             @delay_ms1
+0     21   3   1             @delay_ms1
 0     24   4   2    92  2.9  TIMER0_isr
 0     36   6   0   315  3.3  init_pic
 0     82  13   0   840  6.8  ADS
-0    237  37   0   272  3.1  MAIN
+0    247  38   1   323  3.1  MAIN
 0      3   0   0             @const114
 0     75  12   4             @PSTRINGC7_9600_116_117
 0      5   1   0             @const116
@@ -36,22 +36,22 @@ Page ROM  %  RAM   Vol Diff  Functions:
 
 Program metrics:
     Functions               4
-    Statements              60
-    Comments                163
-    Volume (V)              2010
+    Statements              62
+    Comments                165
+    Volume (V)              2078
     Difficulty (D)          15.4
-    Effort to implement (E) 30867
-    Time to implement (T)   29 minutes
+    Effort to implement (E) 32046
+    Time to implement (T)   30 minutes
     Est Delivered Bugs (B)  0
     Cyclomatic Complexity   6
-    Maintainability (MI)    72
+    Maintainability (MI)    69
 
  Segment     Used  Free
 -----------  ----  ----
 00000-00002     3  0  
 00003-00003     0  1  
 00004-0001D    26  0  
-0001E-007FF   612  1406  
+0001E-007FF   621  1397  
 00800-00FFF     0  2048  
 01000-017FF     0  2048  
 01800-01FFF     0  2048  

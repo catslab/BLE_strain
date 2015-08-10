@@ -92,14 +92,18 @@ void main()
    init_pic();
    BT_EN = 1;
    ADC_CS = 1;
-   delay_ms(250);
+   delay_ms(500);
    
+   
+   //Puts module into transparent UART mode immediately
+   // Can do it with melody smart app 
+   //command trs then wrt so store it
+   printf("TRS\r");
+   delay_ms(250);
+   printf("READY !\r");
+    delay_ms(250);
    enable_interrupts(INT_TIMER0);
    enable_interrupts(GLOBAL);
-   //Puts module into transparent UART mode immediately
-   printf("TRS\r");
-   
-   printf("READY !\r");
    //Example blinking LED program
    while(true)
    {

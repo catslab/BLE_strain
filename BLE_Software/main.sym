@@ -16,11 +16,12 @@
 026-027 ADC_result
 028-029 timer_ADC
 02A     @PRINTF_X_9600_116_117.P1
-02A     @delay_ms1.P2
 02A     ADS.i
 02A     @PSTRINGCN7_9600_116_117.P1
+02A     MAIN.@SCRATCH1
 02A     @PSTRINGC7_9600_116_117.@SCRATCH1
-02B     @PRINTF_X_9600_116_117.P1
+02B     @delay_ms1.P1
+02B     @PRINTF_X_9600_116_117.P2
 02B     @PSTRINGC7_9600_116_117.@SCRATCH2
 02B     @PSTRINGCN7_9600_116_117.@SCRATCH1
 02C     @PSTRINGC7_9600_116_117.@SCRATCH3
@@ -112,16 +113,16 @@ ROM Allocation:
 0067  @delay_ms1
 001E  TIMER0_isr
 0043  init_pic
-00C8  ADS
-0195  MAIN
+00C7  ADS
+0194  MAIN
 0036  @const114
-007D  @PSTRINGC7_9600_116_117
+007C  @PSTRINGC7_9600_116_117
 0039  @const116
 003E  @const117
-011A  @PSTRINGCN7_9600_116_117
-016E  @PRINTF_X_9600_116_117
-0195  @cinit1
-0248  @cinit2
+0119  @PSTRINGCN7_9600_116_117
+016D  @PRINTF_X_9600_116_117
+0194  @cinit1
+0247  @cinit2
 
 
 User Memory space: 
@@ -129,15 +130,15 @@ User Memory space:
 User Memory space: 
 
 Project Directory:
-    C:\Users\cedric\Desktop\BLE_gauge\
+    C:\Users\cedric\Desktop\BLE_strain\BLE_Software\
 
 Project Files:
-    main.c                                                  [07-août-15 12:16  CRC=F438F8EE]
+    main.c                                                  [10-août-15 15:10  CRC=46569D98]
     main.h                                                  [06-août-15 22:15  CRC=8DBF8B2D]
-    ..\..\..\..\Program Files (x86)\PICC\devices\16F1825.h  [28-févr.-12 14:44  CRC=FCDAFB8D]
+    ..\..\..\..\..\Program Files (x86)\PICC\devices\16F1825.h [28-févr.-12 14:44  CRC=FCDAFB8D]
     platform.h                                              [07-août-15 10:27  CRC=9F6BC2C0]
 
-Source signature=BDAB0528
+Source signature=0FC8A9D2
 
 Units:
     main (main)

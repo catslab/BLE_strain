@@ -10,7 +10,7 @@
 int1 flag_ADC = 0;
 unsigned int16 ADC_result=0;
 int16 timer_ADC = 0;
-#define temps_ADC 500 // in ms
+#define temps_ADC 250 // in ms
 
 #int_TIMER0
 void  TIMER0_isr(void) 
@@ -92,14 +92,16 @@ void main()
    init_pic();
    BT_EN = 1;
    ADC_CS = 1;
-   delay_ms(250);
+   delay_ms(500);
    
-   enable_interrupts(INT_TIMER0);
-   enable_interrupts(GLOBAL);
+   
    //Puts module into transparent UART mode immediately
    printf("TRS\r");
-   
+   delay_ms(250);
    printf("READY !\r");
+    delay_ms(250);
+   enable_interrupts(INT_TIMER0);
+   enable_interrupts(GLOBAL);
    //Example blinking LED program
    while(true)
    {
